@@ -6,15 +6,18 @@ public class Rocket : MonoBehaviour {
 
     Rigidbody rigidBody;
     AudioSource audioSource;
+
     [SerializeField] float rThrust = 100f;
     [SerializeField] float mThrust = 50f;
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip success;
     [SerializeField] AudioClip death;
 
-    [SerializeField] ParticleSystem mainEngineParticle;
-    [SerializeField] ParticleSystem successParticle;
-    [SerializeField] ParticleSystem deathParticle;
+    //[SerializeField] ParticleSystem mainEngineParticle;
+    //[SerializeField] ParticleSystem successParticle;
+    //[SerializeField] ParticleSystem deathParticle;
+
+
     enum State {
         Alive, Dying, Transcending
     }
@@ -40,7 +43,7 @@ public class Rocket : MonoBehaviour {
         }
         else {
             audioSource.Stop();
-            mainEngineParticle.Stop();
+           // mainEngineParticle.Stop();
         }
     }
 
@@ -49,7 +52,7 @@ public class Rocket : MonoBehaviour {
         if (!audioSource.isPlaying) {
             audioSource.PlayOneShot(mainEngine);
         }
-        mainEngineParticle.Play();
+        // mainEngineParticle.Play();
     }
 
     private void RespondToRotate() {
