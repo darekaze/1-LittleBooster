@@ -8,6 +8,9 @@ public class Rocket : MonoBehaviour {
     AudioSource audioSource;
     [SerializeField] float rThrust = 100f;
     [SerializeField] float mThrust = 50f;
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] AudioClip success;
+    [SerializeField] AudioClip death;
     enum State {
         Alive, Dying, Transcending
     }
@@ -22,24 +25,28 @@ public class Rocket : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if(state == State.Alive) {
-            Thrust();
-            Rotate();
+            RespondToThrust();
+            RespondToRotate();
         }
 	}
 
-    private void Thrust() {
+    private void RespondToThrust() {
         if (Input.GetKey(KeyCode.Space)) {
-            rigidBody.AddRelativeForce(Vector3.up * mThrust);
-            if (!audioSource.isPlaying) {
-                audioSource.Play();
-            }
+            ApplyThrust();
         }
         else {
             audioSource.Stop();
         }
     }
 
-    private void Rotate() {
+    private void ApplyThrust() {
+        rigidBody.AddRelativeForce(Vector3.up * mThrust);
+        if (!audioSource.isPlaying) {
+            audioSource.PlayOneShot(mainEngine);
+        }
+    }
+
+    private void RespondToRotate() {
         rigidBody.freezeRotation = true; // manual
         float rotationThisFrame = rThrust * Time.deltaTime;
 
@@ -60,15 +67,28 @@ public class Rocket : MonoBehaviour {
                 print("Safe"); 
                 break;
             case "Finish":
-                state = State.Transcending;
-                Invoke("LoadNextScene",1f); // Delay loading next scene
+                StartSuccess();
                 break;
             default:
-                state = State.Dying;
-                Invoke("LoadStartScene",4f);
-                audioSource.Stop();
+                StartDeath();
                 break;
         }
+    }
+
+    
+
+    private void StartSuccess() {
+        state = State.Transcending;
+        audioSource.Stop();
+        audioSource.PlayOneShot(success);
+        Invoke("LoadNextScene", 3f); // Delay loading next scene
+    }
+
+    private void StartDeath() {
+        state = State.Dying;
+        audioSource.Stop();
+        audioSource.PlayOneShot(death);
+        Invoke("LoadStartScene", 3f);
     }
 
     private void LoadStartScene() {
