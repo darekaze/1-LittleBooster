@@ -23,6 +23,8 @@ public class Rocket : MonoBehaviour {
     }
     State state = State.Alive;
 
+    bool collisionDisabled = false;
+
     // Use this for initialization
     void Start () {
         rigidBody = GetComponent<Rigidbody>();
@@ -35,7 +37,18 @@ public class Rocket : MonoBehaviour {
             RespondToThrust();
             RespondToRotate();
         }
-	}
+        DebugTestingTools();
+    }
+
+    private void DebugTestingTools() {
+        if (Input.GetKeyDown(KeyCode.L)) {
+            LoadNextScene();
+        }
+        else if (Input.GetKeyDown(KeyCode.C)) {
+            // Toggle collision
+            collisionDisabled = !collisionDisabled;
+        }
+    }
 
     private void RespondToThrust() {
         if (Input.GetKey(KeyCode.Space)) {
@@ -69,7 +82,7 @@ public class Rocket : MonoBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        if (state != State.Alive) return;
+        if (state != State.Alive || collisionDisabled) return;
 
         switch (collision.gameObject.tag) {
             case "Friendly":
@@ -84,7 +97,6 @@ public class Rocket : MonoBehaviour {
         }
     }
 
-    
 
     private void StartSuccess() {
         state = State.Transcending;
