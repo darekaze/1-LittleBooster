@@ -445,12 +445,12 @@ Prefab:
     - target: {fileID: 114575549786910280, guid: 30935d4949454c04889d5f62f3c10785,
         type: 2}
       propertyPath: movementFactor
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114575549786910280, guid: 30935d4949454c04889d5f62f3c10785,
         type: 2}
       propertyPath: movementVector.x
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 30935d4949454c04889d5f62f3c10785, type: 2}
