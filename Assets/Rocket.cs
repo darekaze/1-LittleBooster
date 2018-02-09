@@ -18,12 +18,9 @@ public class Rocket : MonoBehaviour {
     [SerializeField] ParticleSystem engineParticle;
     [SerializeField] ParticleSystem winParticle;
     [SerializeField] ParticleSystem deadParticle;
-    enum State {
-        Alive, Dying, Transcending
-    }
-    State state = State.Alive;
 
     bool collisionDisabled = false;
+    bool isTranscending = false;
 
     // Use this for initialization
     void Start () {
@@ -33,7 +30,7 @@ public class Rocket : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(state == State.Alive) {
+        if(!isTranscending) {
             RespondToThrust();
             RespondToRotate();
         }
@@ -57,9 +54,13 @@ public class Rocket : MonoBehaviour {
             ApplyThrust();
         }
         else {
-            audioSource.Stop();
-            engineParticle.Stop();
+            StopApplyingThrust();
         }
+    }
+
+    private void StopApplyingThrust() {
+        audioSource.Stop();
+        engineParticle.Stop();
     }
 
     private void ApplyThrust() {
@@ -71,7 +72,7 @@ public class Rocket : MonoBehaviour {
     }
 
     private void RespondToRotate() {
-        rigidBody.freezeRotation = true; // manual
+        rigidBody.angularVelocity = Vector3.zero;// manual
         float rotationThisFrame = rThrust * Time.deltaTime;
 
         if (Input.GetKey(KeyCode.A)) {
@@ -80,11 +81,10 @@ public class Rocket : MonoBehaviour {
         else if (Input.GetKey(KeyCode.D)) {
             transform.Rotate(Vector3.back * rotationThisFrame);
         }
-        rigidBody.freezeRotation = false; // resume physics
     }
 
     private void OnCollisionEnter(Collision collision) {
-        if (state != State.Alive || collisionDisabled) return;
+        if (isTranscending || collisionDisabled) return;
 
         switch (collision.gameObject.tag) {
             case "Friendly":
@@ -101,7 +101,7 @@ public class Rocket : MonoBehaviour {
 
 
     private void StartSuccess() {
-        state = State.Transcending;
+        isTranscending = true;
         audioSource.Stop();
         audioSource.PlayOneShot(success);
         winParticle.Play();
@@ -109,7 +109,7 @@ public class Rocket : MonoBehaviour {
     }
 
     private void StartDeath() {
-        state = State.Dying;
+        isTranscending = true;
         audioSource.Stop();
         audioSource.PlayOneShot(death);
         deadParticle.Play();
