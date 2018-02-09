@@ -37,7 +37,9 @@ public class Rocket : MonoBehaviour {
             RespondToThrust();
             RespondToRotate();
         }
-        DebugTestingTools();
+        if (Debug.isDebugBuild) {
+            DebugTestingTools();
+        }
     }
 
     private void DebugTestingTools() {
@@ -119,6 +121,14 @@ public class Rocket : MonoBehaviour {
     }
 
     private void LoadNextScene() {
-        SceneManager.LoadScene(1);
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+        if(nextSceneIndex < SceneManager.sceneCountInBuildSettings) {
+            SceneManager.LoadScene(nextSceneIndex);
+        }
+        else {
+            LoadStartScene();
+        }
+        
     }
 }
